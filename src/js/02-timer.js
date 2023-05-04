@@ -1,5 +1,6 @@
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
+import Notiflix from 'notiflix';
 
 const dateTimePicker = document.getElementById('datetime-picker');
 const btnStartTimer = document.querySelector('button[data-start]');
@@ -9,7 +10,11 @@ const hoursElem = document.querySelector('[data-hours]');
 const minutesElem = document.querySelector('[data-minutes]');
 const secondsElem = document.querySelector('[data-seconds]');
 
+
 let selectedDate;
+
+// деактивируем кнопку при загрузке страницы
+btnStartTimer.disabled = true;
 
 function convertMs(ms) {
   const second = 1000;
@@ -25,44 +30,70 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
+function formatNumber(num) {
+  return num.toString().padStart(2, '0');
+}
+
 function updateTimer(ms) {
   const time = convertMs(ms);
-  daysElem.textContent = time.days.toString().padStart(2, '0');
-  hoursElem.textContent = time.hours.toString().padStart(2, '0');
-  minutesElem.textContent = time.minutes.toString().padStart(2, '0');
-  secondsElem.textContent = time.seconds.toString().padStart(2, '0');
+  daysElem.textContent = formatNumber(time.days);
+  hoursElem.textContent = formatNumber(time.hours);
+  minutesElem.textContent = formatNumber(time.minutes);
+  secondsElem.textContent = formatNumber(time.seconds);
+}
 
-  if(time.days < 0 || time.hours < 0 || time.minutes < 0 || time.seconds < 0){
+function activateButton() {
+  if (selectedDate && selectedDate.getTime() > Date.now()) {
     btnStartTimer.disabled = false;
+  } else {
+    btnStartTimer.disabled = true;
   }
 }
 
+dateTimePicker.addEventListener('change', () => {
+  selectedDate = dateTimePicker.valueAsDate;
+  activateButton();
+});
+
 btnStartTimer.addEventListener('click', () => {
+  dateTimePicker.disabled = true;
   btnStartTimer.disabled = true;
-  console.log(dateTimePicker);
+
   const intermediateTime = selectedDate.getTime() - Date.now();
-console.log(selectedDate);
-  updateTimer(intermediateTime)
+  updateTimer(intermediateTime);
 
   const intervalId = setInterval(() => {
     const currentTime = Date.now();
     const intermediateTime = selectedDate.getTime() - currentTime;
-    updateTimer(intermediateTime)
+    updateTimer(intermediateTime);
 
     if(intermediateTime <= 1000){
-      clearInterval(intervalId)
+      clearInterval(intervalId);
+      Notiflix.Notify.success(`Опять на работу?`);
     }
   }, 1000);
 });
-
-
 
 flatpickr(dateTimePicker, {
   enableTime: true,
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
-  onClose(selectedDates) {
-    selectedDate = selectedDates[0];
+  onClose(selectedDates, dateStr, instance) {
+    const selected = selectedDates[0];
+    if (selected && selected > new Date()) {
+      selectedDate = selected;
+      btnStartTimer.disabled = false;
+      Notiflix.Notify.success('Будильник заведен правильно!');
+    } else {
+      instance.clear();
+      Notiflix.Notify.failure('Время указано не верно, поставь в будущем времени!');
+    }
   },
 });
+
+
+
+
+
+
