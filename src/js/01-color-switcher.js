@@ -6,7 +6,7 @@ const colorSwitchStart = document.querySelector('button[data-start]')
 const colorSwitchStop = document.querySelector('button[data-stop]')
 const body = document.body
 
-const interval
+let interval
 
 colorSwitchStart.addEventListener('click', ()  => {
    interval = setInterval (()=> {
