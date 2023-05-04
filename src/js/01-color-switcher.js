@@ -9,7 +9,7 @@ const body = document.body
 
 
 colorSwitchStart.addEventListener('click', ()  => {
-intervalId = setInterval (()=> {
+    pause = setInterval (()=> {
     const color = getRandomHexColor();
     body.style.backgroundColor = color
 }, 1000);
@@ -17,7 +17,7 @@ colorSwitchStart.disabled = true;
 })
 
 colorSwitchStop.addEventListener ('click', () => {
-    clearInterval(intervalId);
+    clearInterval(pause);
     colorSwitchStart.disabled = false;
 
 })
