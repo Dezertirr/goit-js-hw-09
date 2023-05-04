@@ -6,10 +6,10 @@ const colorSwitchStart = document.querySelector('button[data-start]')
 const colorSwitchStop = document.querySelector('button[data-stop]')
 const body = document.body
 
-
+let interval
 
 colorSwitchStart.addEventListener('click', ()  => {
-    interval = setInterval (()=> {
+   interval = setInterval (()=> {
     const color = getRandomHexColor();
     body.style.backgroundColor = color
 }, 1000);
