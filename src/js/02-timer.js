@@ -9,6 +9,8 @@ const hoursElem = document.querySelector('[data-hours]');
 const minutesElem = document.querySelector('[data-minutes]');
 const secondsElem = document.querySelector('[data-seconds]');
 
+let selectedDate;
+
 function convertMs(ms) {
   const second = 1000;
   const minute = second * 60;
@@ -37,17 +39,17 @@ function updateTimer(ms) {
 
 btnStartTimer.addEventListener('click', () => {
   btnStartTimer.disabled = true;
-  const selectedDate = dateTimePicker.valueAsDate;
-  const intermediateTime = selectedDate.getTime() - new Date().getTime();
-
+  console.log(dateTimePicker);
+  const intermediateTime = selectedDate.getTime() - Date.now();
+console.log(selectedDate);
   updateTimer(intermediateTime)
 
   const intervalId = setInterval(() => {
-    const currentTime = new Date().getTime();
+    const currentTime = Date.now();
     const intermediateTime = selectedDate.getTime() - currentTime;
     updateTimer(intermediateTime)
 
-    if(intermediateTime <= 0){
+    if(intermediateTime <= 1000){
       clearInterval(intervalId)
     }
   }, 1000);
@@ -61,6 +63,6 @@ flatpickr(dateTimePicker, {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    console.log(selectedDates[0]);
+    selectedDate = selectedDates[0];
   },
 });
